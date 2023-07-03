@@ -41,14 +41,6 @@
     <div class="wrapper">
       <div class="content" role="main">
         <h1>Audio to keyframe string generator</h1>
-        <span
-          >This tool is used to generate strings for the keyframes of AI
-          animation notebooks, such as
-          <a
-            href="https://colab.research.google.com/github/chigozienri/VQGAN-CLIP-animations/blob/main/VQGAN-CLIP-animations.ipynb"
-            >this one</a
-          >, using the volume of audio tracks. <b>Using the Chrome browser is recommended.</b></span
-        >
         <div class="step" id="step1">
           <h2>Step 1: Choose an audio file to analyse:</h2>
           <div class="substep">
@@ -69,8 +61,6 @@
           <div class="substep">
             <label for="framerate">Framerate</label>
             <input id="framerate" />
-          </div>
-          <div class="substep">
             <label for="cadence">Cadense</label>
             <input id="cadence" />
           </div>
@@ -84,14 +74,9 @@
             <label for="fn">Function</label> <input id="fn" />
           </div>
         </div>
-        <div>
-        <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-        </div>
         <div class="step" id="step3">
           <h2>Step 3: Copy string:</h2>
-          <span>If PyTTI format is checked, it will attempt to make a function that PyTTI will understand, but it is experimental. Let me know if you try it out.</span>
-          
-          <div class="substep">
+            <div class="substep">
             <label for="format">Format</label>
             <select name="format">
               <option value="disco" selected>Disco</option>
@@ -103,6 +88,9 @@
             <textarea id="output" readonly="true">Output string will appear here</textarea>
             <button id="copy">Copy string</button>
           </div>
+        </div>
+        <div>
+          <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
         </div>
         <div class="step" id="step4">
           <h2>

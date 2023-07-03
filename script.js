@@ -45,6 +45,7 @@ const fn = document.querySelector("#fn");
 fn.value = "x";
 const ctx = document.getElementById('myChart').getContext('2d');
 
+
 body.ondragover = body.ondragenter = function(evt) {
   evt.preventDefault();
 };
@@ -134,20 +135,6 @@ function getString(arr) {
 }
 
 function filterData(audioBuffer) {
-  // let nChannels = audioBuffer.numberOfChannels;
-  // let merger = new ChannelMergerNode(audioContext, {numberOfInputs: 1, channelCount: 1, channelCountMode: 'explicit'});
-  // let audioBufferSourceNode = new AudioBufferSourceNode(audioContext, {buffer: audioBuffer})
-  // audioBufferSourceNode.connect(merger, 0, 0);
-  // console.log(merger);
-  //   var analyser = audioContext.createAnalyser();
-  //   analyser.fftSize = 2048;
-  //   var bufferLength = analyser.frequencyBinCount;
-  //   var dataArray = new Uint8Array(bufferLength);
-  //   analyser.getByteTimeDomainData(dataArray);
-
-  //   audioBufferSourceNode.connect(analyser);
-  //   console.log(dataArray);
-  //   audioBufferSourceNode.connect(audioContext.destination)
 
   // Average between channels. Take abs so we don't have phase issues (and we eventually want absolute value anyway, for volume).
   function addAbsArrayElements(a, b) {
@@ -171,6 +158,7 @@ function filterData(audioBuffer) {
   }
   let amax = Math.max(...filteredData); // Normalise - maybe not ideal.
   let amin = Math.min(...filteredData);
+
 
   // const Parser = require('expr-eval').Parser;
   // const parser = new Parser();
