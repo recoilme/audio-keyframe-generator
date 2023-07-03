@@ -34,9 +34,16 @@ const body = document.querySelector("body");
 const audio = document.querySelector("#audio");
 const playback = document.querySelector("#playback");
 const framerate = document.querySelector("#framerate");
-framerate.value = 12;
+framerate.value = 30;
+const cadence = document.querySelector("#cadence");
+cadence.value = 3;
+const bmin = document.querySelector("#bmin");
+bmin.value = 0.0;
+const bmax = document.querySelector("#bmax");
+bmax.value = 1.0;
 const fn = document.querySelector("#fn");
-fn.value = "1 + x^4";
+fn.value = "x";
+const ctx = document.getElementById('myChart').getContext('2d');
 
 body.ondragover = body.ondragenter = function(evt) {
   evt.preventDefault();
@@ -54,6 +61,15 @@ framerate.onchange = () => {
   readFile(audio.files[0]);
 };
 fn.onchange = () => {
+  readFile(audio.files[0]);
+};
+cadence.onchange = () => {
+  readFile(audio.files[0]);
+};
+bmin.onchange = () => {
+  readFile(audio.files[0]);
+};
+bmax.onchange = () => {
   readFile(audio.files[0]);
 };
 const output = document.querySelector("#output");
@@ -108,7 +124,7 @@ function getString(arr) {
   for (let ind of Object.keys(arr)) {
     let sample = arr[ind];
     string = string.concat(
-      `${ind}: (${parseFloat(sample).toFixed(decimalPrecision)})`
+      `${ind*cadence.value}: (${parseFloat(sample).toFixed(decimalPrecision)})`
     );
     if (parseInt(ind) < parseInt(arr.length - 1)) {
       string = string.concat(", ");
@@ -145,7 +161,7 @@ function filterData(audioBuffer) {
     .reduce(addAbsArrayElements)
     .map((x) => x / audioBuffer.numberOfChannels);
   // const rawData = audioBuffer.getChannelData(0); // We only need to work with one channel of data
-  const samples = audioBuffer.duration * framerate.value; //rawData.length; // Number of samples we want to have in our final data set
+  const samples = audioBuffer.duration * (framerate.value / cadence.value); //rawData.length; // Number of samples we want to have in our final data set
   const blockSize = Math.floor(rawData.length / samples); // Number of samples in each subdivision
   var filteredData = [];
   for (let i = 0; i < samples; i++) {
@@ -153,12 +169,37 @@ function filterData(audioBuffer) {
     let sum = chunk.reduce((a, b) => a + b, 0);
     filteredData.push(sum / chunk.length);
   }
-  let max = Math.max(...filteredData); // Normalise - maybe not ideal.
+  let amax = Math.max(...filteredData); // Normalise - maybe not ideal.
+  let amin = Math.min(...filteredData);
+
   // const Parser = require('expr-eval').Parser;
   // const parser = new Parser();
   // let expr = parser.parse(fn.value);
+  filteredData2 = structuredClone(filteredData)
+  filteredData2 = filteredData2
+  .map((x) => (x - amin)/ (amax- amin))
+  .map((x) => (parseFloat(bmax.value) - parseFloat(bmin.value))*x+parseFloat(bmin.value))
+  .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)));
+  var keys = Object.keys(filteredData2);
+  var values = keys.map(function(v) { return filteredData2[v]; });
+  var myChart = new Chart(ctx);
+  removeData(myChart);
+  myChart = new Chart(ctx, {
+    type: "line",
+    data: {
+    labels: keys,
+    datasets: [{
+      fill: false,
+      backgroundColor: "rgba(0,0,255,1.0)",
+      borderColor: "rgba(0,0,255,0.1)",
+      data: values
+    }]
+  }
+  });
+
   filteredData = filteredData
-    .map((x) => x / max)
+    .map((x) => (x - amin)/ (amax- amin))
+    .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value))
     .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)));
   let string = getString(filteredData);
   
@@ -171,7 +212,17 @@ function filterData(audioBuffer) {
     let CSVString = [... matches].map((e) => e[1]).join('\n')
     output.innerHTML = CSVString;
   }
+
+
   return filteredData;
+}
+
+function removeData(chart) {
+  chart.data.labels.pop();
+  chart.data.datasets.forEach((dataset) => {
+      dataset.data.pop();
+  });
+  chart.update();
 }
 
 function play(base64) {

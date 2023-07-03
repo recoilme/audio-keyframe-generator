@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-DVWK28FQ1F"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-DVWK28FQ1F");
-    </script>
-    <script>
-      // Request https
-      if (location.protocol != 'https:')
-      {
-       location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
-      }
-    </script>
     
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,6 +25,9 @@
     <meta name="twitter:card" content="summary" />
 
     <link rel="stylesheet" href="style.css" />
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
     
 <script
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.0.0/math.js"
@@ -80,28 +62,30 @@
         <div class="step" id="step2">
           <h2>Step 2: Choose parameters:</h2>
           <div class="substep">
-            'Framerate' controls how coarse the sampling is. For example, if the
-            audio is 2 seconds long, and the fps is 12, then there will be 24
-            samples/frames.
+            'Framerate' (fps).
+            'Cadence' # of in-between frames.
+              'Function' is a function
           </div>
           <div class="substep">
-              'Function' is a function (in normal mathematical notation) to
-              apply to each frame value, where '<tt>x</tt>' is the original amplitude
-              between 0 and 1. You can also use '<tt>y</tt>' to indicate the frame
-              number.<br />
-              For example, if you just put in '<tt>x</tt>', you will get the raw volume
-              of the frame between 0 and 1. If you put in '<tt>1 + x^4 +
-              sin(pi*y/12)</tt>', you will get a baseline sine wave with a period of
-              2 seconds (assuming an fps of 12), plus the amplitude to the 4th
-              power, plus 1).
-          </div>
-          <div class="substep">
-            <label for="framerate">Framerate (fps)</label>
+            <label for="framerate">Framerate</label>
             <input id="framerate" />
+          </div>
+          <div class="substep">
+            <label for="cadence">Cadense</label>
+            <input id="cadence" />
+          </div>
+          <div class="substep">
+            <label for="bmin">Min</label>
+            <input id="bmin" />
+            <label for="bmax">Max</label>
+            <input id="bmax" />
           </div>
           <div class="substep">
             <label for="fn">Function</label> <input id="fn" />
           </div>
+        </div>
+        <div>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
         </div>
         <div class="step" id="step3">
           <h2>Step 3: Copy string:</h2>
