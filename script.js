@@ -166,8 +166,9 @@ function filterData(audioBuffer) {
   filteredData2 = structuredClone(filteredData)
   filteredData2 = filteredData2
   .map((x) => (x - amin)/ (amax- amin))
-  .map((x) => (parseFloat(bmax.value) - parseFloat(bmin.value))*x+parseFloat(bmin.value))
-  .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)));
+  .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
+  .map((x) => (parseFloat(bmax.value) - parseFloat(bmin.value))*x+parseFloat(bmin.value));
+  
   var keys = Object.keys(filteredData2);
   var values = keys.map(function(v) { return filteredData2[v]; });
   var myChart = new Chart(ctx);
@@ -187,8 +188,8 @@ function filterData(audioBuffer) {
 
   filteredData = filteredData
     .map((x) => (x - amin)/ (amax- amin))
-    .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value))
-    .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)));
+    .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
+    .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value));
   let string = getString(filteredData);
   
   if (format.value == "pytti") {
