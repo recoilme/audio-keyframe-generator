@@ -1,4 +1,4 @@
-# Flow whith the beats!
+# Flow with the beats!
 
 Forked version of:  https://github.com/chigozienri/audio-keyframe-generator
 
