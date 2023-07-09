@@ -124,19 +124,9 @@ function getString(arr,amin) {
   let string = "";
   for (let ind of Object.keys(arr)) {
     let sample = arr[ind];
-    //k = (Math.abs((parseFloat(sample)+0.00001) / (parseFloat(bmin.value)+0.00001)));
-    //Math.abs(1. - (parseFloat(sample)/ parseFloat(bmin.value)));
-    //console.log(ind,parseFloat(k).toFixed(decimalPrecision),(parseFloat(bmin.value)+0.00001),(sample+0.00001))
-    if (parseFloat(sample)<parseFloat(bmin.value)) {
-      string = string.concat(
-        `${ind*cadence.value}: (${parseFloat((parseFloat(bmin.value)+parseFloat(bmax.value))/2).toFixed(decimalPrecision)})`
-      );
-    } else {
-      string = string.concat(
-        `${ind*cadence.value}: (${parseFloat(sample).toFixed(decimalPrecision)})`
-      );
-    }
-    
+    string = string.concat(
+      `${ind*cadence.value}: (${parseFloat(sample).toFixed(decimalPrecision)})`
+    );
     if (parseInt(ind) < parseInt(arr.length - 1)) {
       string = string.concat(", ");
     }
