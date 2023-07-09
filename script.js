@@ -120,13 +120,23 @@ function readFile(file) {
   reader.readAsDataURL(file);
 }
 
-function getString(arr) {
+function getString(arr,amin) {
   let string = "";
   for (let ind of Object.keys(arr)) {
     let sample = arr[ind];
-    string = string.concat(
-      `${ind*cadence.value}: (${parseFloat(sample).toFixed(decimalPrecision)})`
-    );
+    //k = (Math.abs((parseFloat(sample)+0.00001) / (parseFloat(bmin.value)+0.00001)));
+    //Math.abs(1. - (parseFloat(sample)/ parseFloat(bmin.value)));
+    //console.log(ind,parseFloat(k).toFixed(decimalPrecision),(parseFloat(bmin.value)+0.00001),(sample+0.00001))
+    if (parseFloat(sample)<parseFloat(bmin.value)) {
+      string = string.concat(
+        `${ind*cadence.value}: (${parseFloat((parseFloat(bmin.value)+parseFloat(bmax.value))/2).toFixed(decimalPrecision)})`
+      );
+    } else {
+      string = string.concat(
+        `${ind*cadence.value}: (${parseFloat(sample).toFixed(decimalPrecision)})`
+      );
+    }
+    
     if (parseInt(ind) < parseInt(arr.length - 1)) {
       string = string.concat(", ");
     }
@@ -151,23 +161,34 @@ function filterData(audioBuffer) {
   const samples = audioBuffer.duration * (framerate.value / cadence.value); //rawData.length; // Number of samples we want to have in our final data set
   const blockSize = Math.floor(rawData.length / samples); // Number of samples in each subdivision
   var filteredData = [];
+  let amin = 10000000.0;
   for (let i = 0; i < samples; i++) {
     let chunk = rawData.slice(i * blockSize, (i + 1) * blockSize - 1);
     let sum = chunk.reduce((a, b) => a + b, 0);
-    filteredData.push(sum / chunk.length);
+    if (sum / chunk.length < 0.01) {
+      filteredData.push(0.0);
+    } else {
+      filteredData.push(sum / chunk.length);
+      if ((sum / chunk.length)<amin) {
+        amin = sum / chunk.length
+      }
+    }
   }
   let amax = Math.max(...filteredData); // Normalise - maybe not ideal.
-  let amin = Math.min(...filteredData);
+  //let amin = Math.min(...filteredData);
+  //console.log(amin, Math.min(...filteredData))
 
 
   // const Parser = require('expr-eval').Parser;
   // const parser = new Parser();
   // let expr = parser.parse(fn.value);
+  filteredData = filteredData
+    .map((x) => (x - amin)/ (amax- amin))
+    .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
+    .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value))
+    .map((x) => (x<parseFloat(bmin.value)?(parseFloat(bmin.value)+parseFloat(bmax.value))/2:x));
   filteredData2 = structuredClone(filteredData)
-  filteredData2 = filteredData2
-  .map((x) => (x - amin)/ (amax- amin))
-  .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
-  .map((x) => (parseFloat(bmax.value) - parseFloat(bmin.value))*x+parseFloat(bmin.value));
+ 
   
   var keys = Object.keys(filteredData2);
   var values = keys.map(function(v) { return filteredData2[v]; });
@@ -186,11 +207,7 @@ function filterData(audioBuffer) {
   }
   });
 
-  filteredData = filteredData
-    .map((x) => (x - amin)/ (amax- amin))
-    .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
-    .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value));
-  let string = getString(filteredData);
+  let string = getString(filteredData, amin);
   
   if (format.value == "pytti") {
     output.innerHTML = `(lambda builtins, fps, kf: kf[builtins["min"](kf, key = lambda x: builtins["abs"](x-(t*fps)//1))])([a for a in (1).__class__.__base__.__subclasses__() if a.__name__ == "catch_warnings"][0]()._module.__builtins__, ${framerate.value}, {${string}})`;
