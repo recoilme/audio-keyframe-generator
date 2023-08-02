@@ -34,9 +34,9 @@ const body = document.querySelector("body");
 const audio = document.querySelector("#audio");
 const playback = document.querySelector("#playback");
 const framerate = document.querySelector("#framerate");
-framerate.value = 30;
+framerate.value = 24;
 const cadence = document.querySelector("#cadence");
-cadence.value = 3;
+cadence.value = 1;
 const bmin = document.querySelector("#bmin");
 bmin.value = 0.0;
 const bmax = document.querySelector("#bmax");
@@ -74,7 +74,6 @@ bmax.onchange = () => {
   readFile(audio.files[0]);
 };
 const output = document.querySelector("#output");
-// output.onclick = () => {output.select()};
 const copy = document.querySelector("#copy");
 
 copy.onclick = () => {
@@ -152,21 +151,25 @@ function filterData(audioBuffer) {
   const blockSize = Math.floor(rawData.length / samples); // Number of samples in each subdivision
   var filteredData = [];
   let amin = 10000000.0;
+  let prev = 0.0;
   for (let i = 0; i < samples; i++) {
     let chunk = rawData.slice(i * blockSize, (i + 1) * blockSize - 1);
     let sum = chunk.reduce((a, b) => a + b, 0);
     if (sum / chunk.length < 0.01) {
-      filteredData.push(0.0);
+      filteredData.push(prev);
     } else {
       filteredData.push(sum / chunk.length);
       if ((sum / chunk.length)<amin) {
         amin = sum / chunk.length
       }
+      prev = sum / chunk.length
     }
   }
-  let amax = Math.max(...filteredData); // Normalise - maybe not ideal.
-  //let amin = Math.min(...filteredData);
-  //console.log(amin, Math.min(...filteredData))
+  let amax = Math.max(...filteredData);
+  filteredData = filteredData
+    .map((x) => (x<=parseFloat(bmin.value)?amin:x));
+
+  console.log(amin, Math.min(...filteredData))
 
 
   // const Parser = require('expr-eval').Parser;
@@ -176,7 +179,8 @@ function filterData(audioBuffer) {
     .map((x) => (x - amin)/ (amax- amin))
     .map((x, ind) => math.eval(fn.value.replace("x", x).replace("y", ind)))
     .map((x) => (parseFloat(bmax.value)-parseFloat(bmin.value))*x+parseFloat(bmin.value))
-    .map((x) => (x<parseFloat(bmin.value)?(parseFloat(bmin.value)+parseFloat(bmax.value))/2:x));
+
+    //.map((x) => (x<parseFloat(bmin.value)?(parseFloat(bmin.value)+parseFloat(bmax.value))/2:x));
   filteredData2 = structuredClone(filteredData)
  
   
