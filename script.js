@@ -167,7 +167,7 @@ function filterData(audioBuffer) {
   }
   let amax = Math.max(...filteredData);
   filteredData = filteredData
-    .map((x) => (x<=parseFloat(bmin.value)?amin:x));
+    .map((x) => (x<=parseFloat(amin.value)?amin:x));
 
   console.log(amin, Math.min(...filteredData))
 
