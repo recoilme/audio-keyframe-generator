@@ -34,15 +34,15 @@ const body = document.querySelector("body");
 const audio = document.querySelector("#audio");
 const playback = document.querySelector("#playback");
 const framerate = document.querySelector("#framerate");
-framerate.value = 24;
+framerate.value = 12;
 const cadence = document.querySelector("#cadence");
-cadence.value = 1;
+cadence.value = 4;
 const bmin = document.querySelector("#bmin");
-bmin.value = 0.0;
+bmin.value = 0.45;
 const bmax = document.querySelector("#bmax");
-bmax.value = 1.0;
+bmax.value = 0.65;
 const fn = document.querySelector("#fn");
-fn.value = "x";
+fn.value = "1-x";
 const ctx = document.getElementById('myChart').getContext('2d');
 
 
@@ -155,7 +155,7 @@ function filterData(audioBuffer) {
   for (let i = 0; i < samples; i++) {
     let chunk = rawData.slice(i * blockSize, (i + 1) * blockSize - 1);
     let sum = chunk.reduce((a, b) => a + b, 0);
-    if (sum / chunk.length < 0.01) {
+    if (sum / chunk.length < 0.05) {
       filteredData.push(prev);
     } else {
       filteredData.push(sum / chunk.length);
