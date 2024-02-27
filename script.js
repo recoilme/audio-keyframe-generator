@@ -156,7 +156,7 @@ function filterData(audioBuffer) {
     let chunk = rawData.slice(i * blockSize, (i + 1) * blockSize - 1);
     let sum = chunk.reduce((a, b) => a + b, 0);
     if (sum / chunk.length < 0.05) {
-      filteredData.push(prev);
+      filteredData.push(0.0);
     } else {
       filteredData.push(sum / chunk.length);
       if ((sum / chunk.length)<amin) {
