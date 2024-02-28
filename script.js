@@ -69,6 +69,9 @@ fn.onchange = () => {
 cadence.onchange = () => {
   readFile(audio.files[0]);
 };
+gmin.onchange = () => {
+  readFile(audio.files[0]);
+};
 bmin.onchange = () => {
   readFile(audio.files[0]);
 };
@@ -159,7 +162,7 @@ function filterData(audioBuffer) {
     let sum = chunk.reduce((a, b) => a + b, 0);
     if (sum / chunk.length < parseFloat(gmin.value)) {
       if (amin >= 10000000.0) {
-        filteredData.push(0.0);
+        filteredData.push(parseFloat(gmin.value));
       } else {
         filteredData.push(amin);
       }
@@ -236,15 +239,4 @@ function play(base64) {
     .then((response) => response.arrayBuffer())
     .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
     .then((audioBuffer) => filterData(audioBuffer));
-  // let audio = new Audio(base64);
-  // audio.play();
-
-  // var source = audioContext.createMediaElementSource(audio);
-  // source.connect(analyser);
-  // source.connect(audioContext.destination);
-  // var dataArray = new Uint8Array(analyser.frequencyBinCount);
-  // analyser.getByteFrequencyData(dataArray);
-
-  // console.log(dataArray);
-  // console.log(analyser);
 }
