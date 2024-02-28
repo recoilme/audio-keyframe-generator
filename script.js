@@ -36,7 +36,9 @@ const playback = document.querySelector("#playback");
 const framerate = document.querySelector("#framerate");
 framerate.value = 12;
 const cadence = document.querySelector("#cadence");
-cadence.value = 4;
+cadence.value = 1;
+const gmin = document.querySelector("#gmin");
+gmin.value = 0.1;
 const bmin = document.querySelector("#bmin");
 bmin.value = 0.45;
 const bmax = document.querySelector("#bmax");
@@ -155,7 +157,7 @@ function filterData(audioBuffer) {
   for (let i = 0; i < samples; i++) {
     let chunk = rawData.slice(i * blockSize, (i + 1) * blockSize - 1);
     let sum = chunk.reduce((a, b) => a + b, 0);
-    if (sum / chunk.length < 0.1) {
+    if (sum / chunk.length < parseFloat(gmin.value)) {
       if (amin >= 10000000.0) {
         filteredData.push(0.0);
       } else {
