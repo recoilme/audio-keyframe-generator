@@ -137,3 +137,8 @@ h2 {
   flex: 1;
   padding: 1rem;
 }
+
+textarea {
+  width: 100%; /* Занимаем всю ширину контейнера */
+  box-sizing: border-box; /* padding и border включены в ширину */
+}
